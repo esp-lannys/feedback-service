@@ -1,5 +1,4 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { FeedbackModel } from '../../models/Feedbacks';
 import {
   FilterFeedbackDto,
   CreateFeedbackDto,
@@ -8,6 +7,7 @@ import {
 import { IFeedbackRepository } from '../feedback-repository/feedback.repository.interface';
 import { IFeedbackService } from './feedback.service.interface';
 import { v4 as uuidv4 } from 'uuid';
+import { Feedbacks } from '@prisma/client';
 
 @Injectable()
 export class FeedbackServiceImplementation implements IFeedbackService {
@@ -16,7 +16,7 @@ export class FeedbackServiceImplementation implements IFeedbackService {
     private feedbackRepository: IFeedbackRepository,
   ) {}
 
-  async getFeedbackList(payload: FilterFeedbackDto): Promise<FeedbackModel[]> {
+  async getFeedbackList(payload: FilterFeedbackDto): Promise<Feedbacks[]> {
     const { limit, offset } = payload;
     const feedbacks = await this.feedbackRepository.findAllByCondition(
       limit,
@@ -26,11 +26,11 @@ export class FeedbackServiceImplementation implements IFeedbackService {
     return feedbacks;
   }
 
-  getFeedbackDetail(id: string): Promise<FeedbackModel> {
+  getFeedbackDetail(id: string): Promise<Feedbacks> {
     return this.feedbackRepository.findById(id);
   }
 
-  async createFeedback(payload: CreateFeedbackDto): Promise<FeedbackModel> {
+  async createFeedback(payload: CreateFeedbackDto): Promise<Feedbacks> {
     const { description, title, images } = payload;
     const params: Record<string, any> = {
       id: uuidv4(),
@@ -45,7 +45,7 @@ export class FeedbackServiceImplementation implements IFeedbackService {
   async updateFeedback(
     id: string,
     payload: UpdateFeedbackDto,
-  ): Promise<FeedbackModel> {
+  ): Promise<Feedbacks> {
     const updatedFeedback = await this.feedbackRepository.update(id, payload);
     return updatedFeedback;
   }

@@ -1,26 +1,42 @@
-import { Module } from '@nestjs/common';
-import { SequelizeModule } from '@nestjs/sequelize';
-import * as Models from '../models/';
+import { INestApplication, Injectable, Module, OnModuleInit } from '@nestjs/common';
+import { PrismaClient } from '@prisma/client';
 
-const sequelizeModule = SequelizeModule.forRootAsync({
-  useFactory: () => ({
-    dialect: 'postgres',
-    host: process.env.DB_HOST,
-    port: Number(process.env.DB_PORT),
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    models: Object.values(Models),
-    logging: (sql: string) => console.log(sql),
-    pool: {
-      max: 5,
-      min: 0,
-      idle: 10000,
-    },
-  }),
-});
+
+@Injectable()
+export class PrismaService extends PrismaClient implements OnModuleInit {
+
+  constructor() {
+    super({
+      log: [
+        {
+          emit: 'event',
+          level: 'query',
+        },
+      ],
+    });
+  }
+
+  async onModuleInit() {
+    await this.$connect();
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    this.$on('query', async (e) => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      console.log(`${e.query} with parameters: ${e.params}`);
+    })
+  }
+
+  async enableShutdownHooks(app: INestApplication) {
+    this.$on('beforeExit', async () => {
+      await app.close();
+    });
+  }
+}
+
 
 @Module({
-  imports: [sequelizeModule],
+  imports: [PrismaService],
+  exports: [PrismaService]
 })
 export class DatabaseModule {}

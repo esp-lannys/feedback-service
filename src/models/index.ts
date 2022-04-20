@@ -1,1 +1,0 @@
-export { FeedbackModel } from "./Feedbacks";

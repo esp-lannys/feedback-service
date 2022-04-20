@@ -1,20 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/sequelize';
-import { FeedbackModel } from '../../models/Feedbacks';
+import { Feedbacks } from '@prisma/client';
+import { PrismaService } from '../../databases/database.module';
 import { IFeedbackRepository } from './feedback.repository.interface';
 
 @Injectable()
 export class FeedbackRepositoryImplementation implements IFeedbackRepository {
-  constructor(
-    @InjectModel(FeedbackModel) private feedbackModel: typeof FeedbackModel,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  findAll(): Promise<FeedbackModel[]> {
-    return this.feedbackModel.findAll({
+  findAll(): Promise<Feedbacks[]> {
+    return this.prisma.feedbacks.findMany({
       where: {
         is_deleted: false,
       },
-      order: [['created_at', 'desc']],
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        images: true,
+        is_deleted: true,
+        created_at: true,
+        updated_at: true,
+      },
     });
   }
 
@@ -22,46 +28,67 @@ export class FeedbackRepositoryImplementation implements IFeedbackRepository {
     limit: number,
     offset: number,
     condition: any,
-  ): Promise<FeedbackModel[]> {
-    return this.feedbackModel.findAll({
-      limit: limit,
-      offset: offset,
+  ): Promise<Feedbacks[]> {
+    return this.prisma.feedbacks.findMany({
+      take: Number(limit),
+      skip: Number(offset),
       where: {
         ...condition,
         is_deleted: false,
       },
-      order: [['created_at', 'desc']],
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        images: true,
+        is_deleted: true,
+        created_at: true,
+        updated_at: true,
+      },
+      orderBy: { created_at: 'asc' },
     });
   }
 
-  findById(id: string): Promise<FeedbackModel> {
-    return this.feedbackModel.findOne({
+  findById(id: string): Promise<Feedbacks> {
+    return this.prisma.feedbacks.findFirst({
       where: {
         id: id,
       },
     });
   }
 
-  create(payload: any): Promise<FeedbackModel> {
-    return this.feedbackModel.create(payload);
+  create(payload: any): Promise<Feedbacks> {
+    return this.prisma.feedbacks.create({
+      data: payload,
+    });
   }
 
-  update(id: string, payload: any): Promise<any> {
-    return this.feedbackModel.update(payload, {
+  update(id: string, payload: any): Promise<Feedbacks> {
+    return this.prisma.feedbacks.update({
       where: {
         id: id,
+      },
+      data: payload,
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        images: true,
+        is_deleted: true,
+        created_at: true,
+        updated_at: true,
       },
     });
   }
 
   delete(id: string): void {
-    this.feedbackModel.update(
-      { is_deleted: true },
-      {
-        where: {
-          id: id,
-        },
+    this.prisma.feedbacks.update({
+      where: {
+        id: id,
       },
-    );
+      data: {
+        is_deleted: true,
+      },
+    });
   }
 }

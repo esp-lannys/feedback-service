@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
-import { SequelizeModule } from '@nestjs/sequelize';
+import { DatabaseModule, PrismaService } from '../../databases/database.module';
 import { FileModule } from '../../files/file-module/file.module';
-import { FeedbackModel } from '../../models';
 import { FeedbackController } from '../feedback-controller/feedback.controller';
 import { FeedbackRepositoryImplementation } from '../feedback-repository/feedback.repository.implement';
 import { IFeedbackRepository } from '../feedback-repository/feedback.repository.interface';
@@ -9,7 +8,7 @@ import { FeedbackServiceImplementation } from '../feedback-service/feedback.serv
 import { IFeedbackService } from '../feedback-service/feedback.service.interface';
 
 @Module({
-  imports: [SequelizeModule.forFeature([FeedbackModel]), FileModule],
+  imports: [FileModule, DatabaseModule],
   providers: [
     {
       provide: IFeedbackRepository,
@@ -19,6 +18,7 @@ import { IFeedbackService } from '../feedback-service/feedback.service.interface
       provide: IFeedbackService,
       useClass: FeedbackServiceImplementation,
     },
+    PrismaService
   ],
   controllers: [FeedbackController],
 })

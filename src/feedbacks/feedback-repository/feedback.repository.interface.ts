@@ -1,10 +1,11 @@
-import { FeedbackModel } from '../../models/Feedbacks';
+import { Feedbacks, PrismaPromise } from "@prisma/client";
+
 
 export interface IFeedbackRepository {
-  findAll(): Promise<FeedbackModel[]>;
-  findAllByCondition(limit: number, offset: number, condition: any): Promise<FeedbackModel[]>;
-  findById(id: string): Promise<FeedbackModel>;
-  create(payload: any): Promise<FeedbackModel>;
+  findAll(): Promise<Feedbacks[]>;
+  findAllByCondition(limit: number, offset: number, condition: any): Promise<Feedbacks[]>;
+  findById(id: string): Promise<Feedbacks>;
+  create(payload: any): Promise<Feedbacks>;
   update(id: string, payload: any): Promise<any>;
   delete(id: string): void;
 }
