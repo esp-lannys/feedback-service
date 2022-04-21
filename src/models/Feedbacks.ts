@@ -1,43 +1,37 @@
-import {
-  Column,
-  Model,
-  Table,
-  CreatedAt,
-  UpdatedAt,
-  DataType,
-} from 'sequelize-typescript';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document, SchemaTypes } from 'mongoose';
 
-@Table({
-  modelName: 'Feedbacks',
+export type FeedbackDocument = Feedback & Document;
+
+@Schema({
+  timestamps: {
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+  },
 })
-export class FeedbackModel extends Model<FeedbackModel> {
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
+export class Feedback {
+  @Prop({
+    type: String,
   })
   title: string;
 
-  @Column({
-    type: DataType.STRING,
+  @Prop({
+    type: String,
     allowNull: false,
   })
   description: string;
 
-  @Column({
-    type: DataType.ARRAY(DataType.STRING),
+  @Prop({
+    type: SchemaTypes.Array,
     allowNull: false,
   })
   images: string[];
 
-  @Column({
-    type: DataType.BOOLEAN,
+  @Prop({
+    type: Boolean,
     defaultValue: false,
   })
   is_deleted: boolean;
-
-  @CreatedAt
-  created_at: Date;
-
-  @UpdatedAt
-  updated_at: Date;
 }
+
+export const FeedbackSchema = SchemaFactory.createForClass(Feedback);

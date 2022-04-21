@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
-import { SequelizeModule } from '@nestjs/sequelize';
+import { MongooseModule } from '@nestjs/mongoose';
 import { FileModule } from '../../files/file-module/file.module';
-import { FeedbackModel } from '../../models';
+import { Feedback } from '../../models';
+import { FeedbackSchema } from '../../models/Feedbacks';
 import { FeedbackController } from '../feedback-controller/feedback.controller';
 import { FeedbackRepositoryImplementation } from '../feedback-repository/feedback.repository.implement';
 import { IFeedbackRepository } from '../feedback-repository/feedback.repository.interface';
@@ -9,7 +10,12 @@ import { FeedbackServiceImplementation } from '../feedback-service/feedback.serv
 import { IFeedbackService } from '../feedback-service/feedback.service.interface';
 
 @Module({
-  imports: [SequelizeModule.forFeature([FeedbackModel]), FileModule],
+  imports: [
+    MongooseModule.forFeature([
+      { name: Feedback.name, schema: FeedbackSchema },
+    ]),
+    FileModule,
+  ],
   providers: [
     {
       provide: IFeedbackRepository,

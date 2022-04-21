@@ -1,11 +1,11 @@
-import { FeedbackModel } from "../../models/Feedbacks";
+import { FeedbackDocument } from "../../models/Feedbacks";
 import { CreateFeedbackDto, FilterFeedbackDto, UpdateFeedbackDto } from "../feedback-dto/feedback.dto";
 
 export interface IFeedbackService {
-    getFeedbackList(payload: FilterFeedbackDto): Promise<FeedbackModel[]>
-    getFeedbackDetail(id: string): Promise<FeedbackModel>
-    createFeedback(payload: CreateFeedbackDto): Promise<FeedbackModel>
-    updateFeedback(id: string, payload: UpdateFeedbackDto): Promise<FeedbackModel>
+    getFeedbackList(payload: FilterFeedbackDto): Promise<FeedbackDocument[]>
+    getFeedbackDetail(id: string): Promise<FeedbackDocument>
+    createFeedback(payload: CreateFeedbackDto): Promise<FeedbackDocument>
+    updateFeedback(id: string, payload: UpdateFeedbackDto): Promise<FeedbackDocument>
     deleteFeedback(id: string): Promise<void>
 }
 

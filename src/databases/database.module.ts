@@ -1,26 +1,18 @@
 import { Module } from '@nestjs/common';
-import { SequelizeModule } from '@nestjs/sequelize';
-import * as Models from '../models/';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
 
-const sequelizeModule = SequelizeModule.forRootAsync({
-  useFactory: () => ({
-    dialect: 'postgres',
-    host: process.env.DB_HOST,
-    port: Number(process.env.DB_PORT),
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    models: Object.values(Models),
-    logging: (sql: string) => console.log(sql),
-    pool: {
-      max: 5,
-      min: 0,
-      idle: 10000,
-    },
+const mongooseModule = MongooseModule.forRootAsync({
+  imports: [ConfigModule],
+  useFactory: (configService: ConfigService) => ({
+    uri: configService.get<string>('DATABASE_URL'),
+    useNewUrlParser: true,
+    useCreateIndex: true,
   }),
+  inject: [ConfigService],
 });
 
 @Module({
-  imports: [sequelizeModule],
+  imports: [mongooseModule],
 })
 export class DatabaseModule {}

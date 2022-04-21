@@ -1,10 +1,10 @@
-import { FeedbackModel } from '../../models/Feedbacks';
+import { FeedbackDocument } from '../../models/Feedbacks';
 
 export interface IFeedbackRepository {
-  findAll(): Promise<FeedbackModel[]>;
-  findAllByCondition(limit: number, offset: number, condition: any): Promise<FeedbackModel[]>;
-  findById(id: string): Promise<FeedbackModel>;
-  create(payload: any): Promise<FeedbackModel>;
+  findAll(): Promise<FeedbackDocument[]>;
+  findAllByCondition(limit: number, offset: number, condition: any): Promise<FeedbackDocument[]>;
+  findById(id: string): Promise<FeedbackDocument>;
+  create(payload: any): Promise<FeedbackDocument>;
   update(id: string, payload: any): Promise<any>;
   delete(id: string): void;
 }
